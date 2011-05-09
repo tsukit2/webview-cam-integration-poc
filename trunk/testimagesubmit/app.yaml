@@ -1,0 +1,13 @@
+application: testimagesubmit
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+- url: /(.*\.(gif|png|jpg|js))
+  static_files: static/\1
+  upload: static/(.*\.(gif|png|jpg|js))
+
+- url: .*
+  script: main.py
+

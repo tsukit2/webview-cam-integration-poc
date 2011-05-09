@@ -1,0 +1,37 @@
+<html>
+   <head>
+      <style TYPE="text/css"> 
+         table {border: black solid 1px; width:100%}
+         tr {border: black solid 1px}
+         th {border: black solid 1px}
+         td {border: black solid 1px}
+      </style>
+   </head>
+   <body>
+      <h1>ASynchronous upload done Here is your information:</h1>
+      <br/><br/>
+      <table style="border: black solid 1px">
+         <tr>
+            <th width="20%">What</th>
+            <th width="80%">Data</th>
+         </tr>
+         <tr>
+            <td>Amount</td>
+            <td>{{amount}}</td>
+         </tr>
+         <tr>
+            <td>Front Check Image</td>
+            <td><img src="data:image/jpeg;base64,{{frontCheckImageData}}" /></td>
+         </tr>
+         <tr>
+            <td>Back Check Image</td>
+            <td><img src="data:image/jpeg;base64,{{backCheckImageData}}" /></td>
+         </tr>
+      </table>
+      <br/>
+      <br/>
+      <a href="/asyncupload">Retry again!</a><br/>
+      <a href="/">Back to menu</a><br/>
+   </body>
+
+</html>

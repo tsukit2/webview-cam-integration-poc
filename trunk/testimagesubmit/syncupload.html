@@ -1,0 +1,78 @@
+<html>
+   <head>
+      <script type="text/javascript" src="{{device}}.js"></script>   
+      <script>
+         // initially this is empty
+         var frontCheckImageData = "";
+         var frontThumbnailCheckImageData = "";
+         var backCheckImageData = "";
+         var backThumbnailCheckImageData = "";
+
+         function frontCheckImageIsTaken(pictureData, thumbnailData) {
+            frontCheckImageData = pictureData;
+            frontThumbnailCheckImageData = thumbnailData;
+            pictureIsTaken(pictureData, thumbnailData, 'front');
+         }
+
+         function backCheckImageIsTaken(pictureData, thumbnailData) {
+            backCheckImageData = pictureData;
+            backThumbnailCheckImageData = thumbnailData;
+            pictureIsTaken(pictureData, thumbnailData, 'back');
+         }
+
+         function pictureIsTaken(pictureData, thumbnailData, whichImage) {
+            var theImage = document.getElementById(whichImage + 'CheckImage');
+            theImage.src = "data:image/jpeg;base64," + thumbnailData;
+            var theHiddenField = document.getElementById(whichImage + 'CheckImageData');
+            theHiddenField.value = pictureData;
+         }
+
+         function reloadImageIfAny() {
+            if (frontCheckImageData != "" && frontThumbnailCheckImageData != "") {
+               pictureIsTaken(frontCheckImageData, frontThumbnailCheckImageData, "front");
+            }
+            if (backCheckImageData != "" && backThumbnailCheckImageData != "") {
+               pictureIsTaken(backCheckImageData, backThumbnailCheckImageData, "back");
+            }
+         }
+         function checkSubmission() {
+            var theFrontImageData = document.getElementById('frontCheckImageData');
+            if (theFrontImageData.value == "") {
+               alert("Please take front check image first.");
+               return false;
+            }
+            var theBackImageData = document.getElementById('backCheckImageData');
+            if (theBackImageData.value == "") {
+               alert("Please take back check image first.");
+               return false;
+            }
+            return true;
+
+         }
+      </script>
+   </head>
+	<body onload="reloadImageIfAny()">
+      <form action="syncupload/upload" method="post" onsubmit="return checkSubmission()">
+         <h1>Synchronous WebView/Camera Integration Demo</h1>
+         Amount: <input type="text" name="amount" />
+         <br/><br/>
+         Front Check Image:<br/>
+         <div style="width:160px; height:120px; background:gray; align:center; vertical-align:middle">
+            <img id="frontCheckImage" src="" style="width:160px; height:120px; background:gray;" onclick="getpicture('frontCheckImageIsTaken')" />
+            <input type="hidden" id="frontCheckImageData" name="frontCheckImageData" />
+         </div>
+         <br/>
+         Back Check Image:<br/>
+         <div style="width:160px; height:120px; background:gray; align:center; vertical-align:middle" onclick="getpicture('backCheckImageIsTaken')">
+            <img id="backCheckImage" src="" style="width:160px; height:120px; background:gray;" />
+            <input type="hidden" id="backCheckImageData" name="backCheckImageData" />
+         </div>
+         <br/>
+         <input type="submit" value="Make Deposit" />
+      </form>
+      <br/>
+      <a href="/">Back to menu</a><br/>
+	</body>
+</html>
+
+		
