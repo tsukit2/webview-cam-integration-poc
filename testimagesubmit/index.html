@@ -1,0 +1,27 @@
+<html>
+   <body>
+      <h1>Check Image Upload Test</h1>
+      <h3>Please chose which test you want:</h3>
+      <a href="syncupload">Synchronous check image upload</a>
+      <br/>
+      This test submits the user-entered data and the check image all together in one
+      request. This is the simplest implementation.
+      <br/><br/>
+      <a href="asyncupload">Asynchronous check image upload</a>
+      <br/>
+      This test uploads the check images as soon as they are captured. The server gives 
+      back a handle for each image uploaded. This handle is inserted into the form submitted
+      later with the user-entered data when the user actually submits. If the uploading is
+      still going on, the page waits until the upload is completely done. This is more complex 
+      and requires some server/client coordination.
+      <br/><br/>
+      <a href="parallelupload">Parallel check image upload</a>
+      <br/>
+      This test uploads the check images in parallel when the user clicks submit. Server gives
+      back a handle for each image uploaded. The handle is inserted into the form being submitted.
+      The actual submit waits until both images are properly loaded then the user-entered data
+      and the handles are submitted. This is as complex and requires some server/client coordination
+      as the asynchronouse check upload.
+   </body>
+</html>
+

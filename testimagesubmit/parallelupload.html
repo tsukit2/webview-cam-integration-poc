@@ -1,0 +1,136 @@
+<html>
+   <head>
+      <script type="text/javascript" src="jquery-1.5.2.min.js"></script>   
+      <script type="text/javascript" src="{{device}}.js"></script>   
+      <script>
+         // initially this is empty
+         var frontCheckImageHandle = "";
+         var frontCheckImageData = "";
+         var frontThumbnailCheckImageData = "";
+         var backCheckImageHandle = "";
+         var backCheckImageData = "";
+         var backThumbnailCheckImageData = "";
+         var uploadingFrontCheckImage = false;
+         var uploadingBackCheckImage = false;
+
+         function frontCheckImageIsTaken(pictureData, thumbnailData) {
+            frontCheckImageData = pictureData;
+            frontThumbnailCheckImageData = thumbnailData;
+            pictureIsTaken(thumbnailData, 'front');
+         }
+
+         function uploadFrontCheckImage() {
+            uploadingFrontCheckImage = true;
+            depositImage(frontCheckImageData, 'front', function(data) { 
+               uploadingFrontCheckImage = false;
+               frontCheckImageHandle = data;
+               readyToSubmitForm();
+            });
+         }
+
+         function backCheckImageIsTaken(pictureData, thumbnailData) {
+            backCheckImageData = pictureData;
+            backThumbnailCheckImageData = thumbnailData;
+            pictureIsTaken(thumbnailData, 'back');
+         }
+
+         function uploadBackCheckImage() {
+            uploadingBackCheckImage = true;
+            depositImage(backCheckImageData, 'back', function(data) { 
+               uploadingBackCheckImage = false;
+               backCheckImageHandle = data;
+               readyToSubmitForm();
+            });
+         }
+
+         function pictureIsTaken(thumbnailData, whichImage) {
+            var theImage = document.getElementById(whichImage + 'CheckImage');
+            theImage.src = "data:image/jpeg;base64," + thumbnailData;
+         }
+
+         function depositImage(pictureData, whichImage, finishFunc) {
+            var statusBar = $('#' + whichImage + "SubmissionStatus");
+            statusBar.text("Submitting...");
+            statusBar.css("color", "pink"); 
+            $.post("asyncupload/deposit",
+               { 'checkImageData': pictureData },
+               function(data) { 
+                  statusBar.text("Submitted!"); 
+                  statusBar.css("color", "green"); 
+                  pictureIsDeposited(data, whichImage);
+                  finishFunc(data);
+               }).error(function() {
+                  statusBar.text("Submission Failed! Try again."); 
+                  statusBar.css("color", "red"); 
+                  finishFunc('');
+               });
+         }
+
+         function pictureIsDeposited(pictureHandle, whichImage) {
+            var theImageHandle = document.getElementById(whichImage + 'CheckImageHandle');
+            theImageHandle.value = pictureHandle;
+            eval(whichImage + "CheckImageHandle = '" + pictureHandle + "';");
+         }
+
+         function reloadImageIfAny() {
+            if (frontThumbnailCheckImageData != "") {
+               pictureIsTaken(frontThumbnailCheckImageData, "front");
+            }
+            if (backThumbnailCheckImageData != "") {
+               pictureIsTaken(backThumbnailCheckImageData, "back");
+            }
+         }
+
+         function checkSubmission() {
+            if (frontCheckImageData == "") {
+               alert("Please take front check image first.");
+               return false;
+            }
+            if (backCheckImageData == "") {
+               alert("Please take back check image first.");
+               return false;
+            }
+
+            $("#waitMsg").text("Please wait...");
+            $("#submitButton").attr('disabled', 'disabled');
+            uploadFrontCheckImage();
+            uploadBackCheckImage();
+            return false;
+         }
+
+         function readyToSubmitForm() {
+            if (!uploadingFrontCheckImage && frontCheckImageHandle !="" && 
+                !uploadingBackCheckImage && backCheckImageHandle != "") {
+               var theForm = document.getElementById("theForm");
+               theForm.submit();
+            }
+         }
+      </script>
+   </head>
+	<body onload="reloadImageIfAny()">
+      <form id="theForm" action="parallelupload/upload" method="post" onsubmit="return checkSubmission()">
+         <h1>Parallel WebView/Camera Integration Demo</h1>
+         Amount: <input type="text" name="amount" />
+         <br/><br/>
+         Front Check Image: <span id="frontSubmissionStatus"> </span>
+         <br/>
+         <div style="width:160px; height:120px; background:gray; align:center; vertical-align:middle">
+            <img id="frontCheckImage" src="" style="width:160px; height:120px; background:gray;" onclick="getpicture('frontCheckImageIsTaken')" />
+            <input type="hidden" id="frontCheckImageHandle" name="frontCheckImageHandle" />
+         </div>
+         <br/>
+         Back Check Image: <span id="backSubmissionStatus"> </span>
+         <br/>
+         <div style="width:160px; height:120px; background:gray; align:center; vertical-align:middle" onclick="getpicture('backCheckImageIsTaken')">
+            <img id="backCheckImage" src="" style="width:160px; height:120px; background:gray;" />
+            <input type="hidden" id="backCheckImageHandle" name="backCheckImageHandle" />
+         </div>
+         <br/>
+         <input id="submitButton" type="submit" value="Make Deposit" /> <span id="waitMsg"> </span>
+      </form>
+      <br/>
+      <a href="/">Back to menu</a><br/>
+	</body>
+</html>
+
+		
